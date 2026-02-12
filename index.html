@@ -15,7 +15,7 @@ canvas{display:block;width:100%;height:100%;object-fit:contain;image-rendering:p
 <script>
 "use strict";
 // ============================================================
-// WEB RUNNER - A Spider-Themed Retro Platform Auto-Runner
+// WEB RUNNER - A Superhero-Themed Retro Platform Auto-Runner
 // ============================================================
 
 // --- CONSTANTS & CONFIG ---
@@ -31,22 +31,22 @@ const INV_TIME = 2.0; // invincibility seconds
 const STOMP_BOUNCE = -400;
 
 const LEVEL_CONFIGS = [
-  { name:"City Streets", bg:"city", runSpeed:180, gapMin:400, energyMult:0.8, hasPits:false, bugTarget:3, bugTotal:5, length:6000,
-    enemies:["beetle"], obstTypes:["rock","domino"], pickupRate:0.35, enemyRate:0.25 },
+  { name:"Beach Run", bg:"beach", runSpeed:180, gapMin:400, energyMult:0.8, hasPits:false, bugTarget:3, bugTotal:5, length:6000,
+    enemies:["beetle"], obstTypes:["rock","domino","shell"], pickupRate:0.35, enemyRate:0.25 },
   { name:"Construction Zone", bg:"construction", runSpeed:200, gapMin:300, energyMult:1.0, hasPits:false, bugTarget:5, bugTotal:8, length:7500,
     enemies:["beetle","centipede"], obstTypes:["rock","domino","building"], pickupRate:0.3, enemyRate:0.3 },
   { name:"Rooftop Run", bg:"rooftop", runSpeed:220, gapMin:250, energyMult:1.2, hasPits:true, bugTarget:7, bugTotal:10, length:9000,
     enemies:["centipede","wasp"], obstTypes:["rock","building"], pickupRate:0.28, enemyRate:0.35 },
   { name:"Dark Tunnel", bg:"tunnel", runSpeed:240, gapMin:200, energyMult:1.5, hasPits:true, bugTarget:8, bugTotal:11, length:10000,
     enemies:["beetle","centipede","wasp"], obstTypes:["rock","shell","domino"], pickupRate:0.32, enemyRate:0.38 },
-  { name:"Spider's Lair", bg:"lair", runSpeed:200, gapMin:200, energyMult:1.3, hasPits:true, bugTarget:10, bugTotal:12, length:11000,
+  { name:"Villain's Lair", bg:"lair", runSpeed:200, gapMin:200, energyMult:1.3, hasPits:true, bugTarget:10, bugTotal:12, length:11000,
     enemies:["beetle","centipede","wasp"], obstTypes:["rock","building","shell"], pickupRate:0.3, enemyRate:0.35, hasBoss:true }
 ];
 
 const COLORS = {
-  sky:["#4a90d9","#d4881a","#1a1a3a","#0a0a15","#2a0a2a"],
-  ground:["#555","#886644","#556","#333","#442244"],
-  groundTop:["#777","#aa8866","#778","#444","#553355"],
+  sky:["#55bbee","#d4881a","#1a1a3a","#0a0a15","#2a0a2a"],
+  ground:["#c2a66e","#886644","#556","#333","#442244"],
+  groundTop:["#d4b87a","#aa8866","#778","#444","#553355"],
   spider:"#d22",
   spiderDark:"#911",
   spiderEye:"#fff",
@@ -182,116 +182,117 @@ const SPRITE_COLORS = {
   'D':'#333333','W':'#ccddee','A':'#557799','R':'#ff4444','Y':'#ffff44',
   'V':'#9944dd', 'M':'#552288','F':'#ff8844','I':'#aaddff','O':'#ff6600',
   'C':'#00aadd','H':'#88ff88','E':'#44dd44','K':'#222222','U':'#664444',
-  'Z':'#aaaaaa','X':'#666666'
+  'Z':'#aaaaaa','X':'#666666',
+  's':'#e8a878','J':'#c28858'
 };
 
-// Spider player sprites (16x16)
+// Superhero player sprites (16x16)
 const SPIDER_RUN1 = makeSprite(16,16,[
   "0000000000000000",
+  "00000kkkk0000000",
+  "0000kssssk000000",
+  "0000kwswsk000000",
+  "0000kssssk000000",
+  "000000ss00000000",
+  "00000drrrd000000",
   "0000drrrrrd00000",
-  "000drrrrrrrrd000",
-  "000drwkrrwkrd000",
-  "000drrrrrrrd0000",
   "0000drrrrrd00000",
-  "00dddrrrrrddd00",
-  "0d00drrrrrd00d0",
-  "d000ddddddd000d",
-  "0d000drrrd000d0",
-  "00d00drrrd00d00",
-  "000d0drrrd0d000",
-  "0000ddrrrddd000",
-  "000d00ddd000d00",
-  "00d000000000d00",
-  "0d00000000000d0"
+  "00000drrrd000000",
+  "00000dkkd0000000",
+  "00000dk0kd000000",
+  "0000dk000kd00000",
+  "000dk00000kd0000",
+  "000rr00000rr0000",
+  "0000000000000000"
 ]);
 const SPIDER_RUN2 = makeSprite(16,16,[
   "0000000000000000",
+  "00000kkkk0000000",
+  "0000kssssk000000",
+  "0000kwswsk000000",
+  "0000kssssk000000",
+  "000000ss00000000",
+  "00000drrrd000000",
   "0000drrrrrd00000",
-  "000drrrrrrrrd000",
-  "000drwkrrwkrd000",
-  "000drrrrrrrd0000",
   "0000drrrrrd00000",
-  "00dddrrrrrddd00",
-  "d000drrrrrd000d",
-  "0d00ddddddd00d0",
-  "00d00drrrd00d00",
-  "000d0drrrd0d000",
-  "0000ddrrrddd000",
-  "000d0drrrd0d000",
-  "00d00ddddd00d00",
-  "0d00000000000d0",
+  "00000drrrd000000",
+  "00000dkkd0000000",
+  "00000dkkd0000000",
+  "00000dkkd0000000",
+  "0000dk00kd000000",
+  "0000rr00rr000000",
   "0000000000000000"
 ]);
 const SPIDER_RUN3 = makeSprite(16,16,[
   "0000000000000000",
+  "00000kkkk0000000",
+  "0000kssssk000000",
+  "0000kwswsk000000",
+  "0000kssssk000000",
+  "000000ss00000000",
+  "00000drrrd000000",
   "0000drrrrrd00000",
-  "000drrrrrrrrd000",
-  "000drwkrrwkrd000",
-  "000drrrrrrrd0000",
   "0000drrrrrd00000",
-  "0ddddrrrrrddd00",
-  "d000drrrrrd00d0",
-  "00d0ddddddd000d",
-  "000d0drrrd00d00",
-  "00d00drrrd000d0",
-  "0d000drrrd0000d",
-  "0000ddrrrddd000",
-  "00d000ddd0000d0",
-  "000d0000000d000",
+  "00000drrrd000000",
+  "00000dkkd0000000",
+  "0000dk0kd0000000",
+  "000kd000dk000000",
+  "00kd00000dk00000",
+  "00rr00000rr00000",
   "0000000000000000"
 ]);
 const SPIDER_JUMP = makeSprite(16,16,[
-  "000d000000d00000",
-  "00d0drrrrrd0d000",
-  "0d0drrrrrrrdd0d0",
-  "d00drwkrrwkrd00d",
-  "000drrrrrrrd0000",
+  "000dk000000kd000",
+  "0000dk0000kd0000",
+  "00000kkkk0000000",
+  "0000kssssk000000",
+  "0000kwswsk000000",
+  "0000kssssk000000",
+  "000000ss00000000",
+  "00000drrrd000000",
   "0000drrrrrd00000",
-  "00dddrrrrrddd00",
-  "0d00drrrrrd00d0",
-  "d000ddddddd000d",
-  "0000ddrrrddd0000",
-  "00000drrrd000000",
-  "00000drrrd000000",
-  "0000ddrrrddd0000",
-  "000d00ddd0000d00",
-  "00d000000000d000",
-  "0d00000000000d00"
+  "0000drrrrrd00000",
+  "00000dkkd0000000",
+  "00000dkkd0000000",
+  "00000dkkd0000000",
+  "0000dk00kd000000",
+  "0000rr00rr000000",
+  "0000000000000000"
 ]);
 const SPIDER_STOMP = makeSprite(16,16,[
   "0000000000000000",
-  "0000drrrrrd00000",
-  "000drrrrrrrrd000",
-  "000drwkrrwkrd000",
-  "000drrrrrrrd0000",
-  "0000drrrrrd00000",
-  "00dddrrrrrddd00",
-  "0d00drrrrrd00d0",
-  "d000ddddddd000d",
-  "0000ddrrrddd0000",
+  "00000kkkk0000000",
+  "0000kssssk000000",
+  "0000kwswsk000000",
+  "0000kssssk000000",
+  "000000ss00000000",
   "00000drrrd000000",
+  "0000drrrrrd00000",
+  "0000drrrrrd00000",
   "00000drrrd000000",
-  "000dddrrrddd0000",
-  "00d000ddd0000d00",
-  "0d0000000000d000",
-  "d000000000000d00"
+  "00000dkkd0000000",
+  "000dk0000kd00000",
+  "00dk000000kd0000",
+  "0dk00000000kd000",
+  "0rr00000000rr000",
+  "0000000000000000"
 ]);
 const SPIDER_HURT = makeSprite(16,16,[
   "0000000000000000",
-  "0000drrrrrd00000",
-  "000drrrrrrrrd000",
-  "000drkwrrkwrd000",
-  "000drrrrrrrd0000",
-  "0000drrOrrd00000",
-  "00dddrrrrrddd00",
-  "d000drrrrrd000d",
-  "0d00ddddddd00d0",
-  "00d00drrrd00d00",
-  "000d0drrrd0d000",
-  "0000ddrrrddd000",
-  "000d0drrrd0d000",
-  "00d00ddddd00d00",
-  "0d00000000000d0",
+  "00000kkkk0000000",
+  "0000kssssk000000",
+  "0000krkrsk000000",
+  "0000ksOssk000000",
+  "000000ss00000000",
+  "00000drrrd000000",
+  "0d00drrrrrd00000",
+  "00d0drrrrrd00d00",
+  "00000drrrd000000",
+  "00000dkkd0000000",
+  "00000dkkd0000000",
+  "00000dkkd0000000",
+  "0000dk00kd000000",
+  "0000rr00rr000000",
   "0000000000000000"
 ]);
 
@@ -1284,7 +1285,12 @@ function generateLevel(levelIdx) {
     } else {
       // Obstacle
       const oTypes = cfg.obstTypes;
-      const oType = oTypes[Math.floor(Math.random() * oTypes.length)];
+      let oType;
+      if (levelIdx === 0 && oTypes.indexOf("shell") >= 0 && Math.random() < 0.5) {
+        oType = "shell";
+      } else {
+        oType = oTypes[Math.floor(Math.random() * oTypes.length)];
+      }
       const ox = spawnX;
       const oy = groundY;
       if (oType === "rock") {
@@ -1329,38 +1335,76 @@ function drawBackground(ctx, levelIdx) {
   const bg = LEVEL_CONFIGS[levelIdx].bg;
   const cx = G.camera.x;
 
-  if (bg === "city") {
-    // Sky gradient
+  if (bg === "beach") {
+    // Light blue sky gradient
     const grad = ctx.createLinearGradient(0,0,0,H);
-    grad.addColorStop(0, "#2a5599");
-    grad.addColorStop(1, "#6688bb");
+    grad.addColorStop(0, "#55bbee");
+    grad.addColorStop(0.5, "#88ddff");
+    grad.addColorStop(1, "#aaeeff");
     ctx.fillStyle = grad;
     ctx.fillRect(0,0,W,H);
 
-    // Far buildings (slow parallax)
-    ctx.fillStyle = "#334466";
-    for (let i = 0; i < 15; i++) {
-      const bx = ((i * 120 - cx * 0.1) % (W + 200)) - 100;
-      const bh = 80 + (i * 37 % 60);
-      ctx.fillRect(bx, GROUND_Y - bh, 60, bh);
-      // windows
-      ctx.fillStyle = "#ffeeaa";
-      for (let wy = 0; wy < Math.floor(bh/20); wy++) {
-        for (let wx = 0; wx < 3; wx++) {
-          if (Math.random() > 0.3 || true) {
-            ctx.fillRect(bx + 8 + wx*16, GROUND_Y - bh + 8 + wy*20, 8, 10);
-          }
-        }
-      }
-      ctx.fillStyle = "#334466";
+    // Sun
+    ctx.fillStyle = "#ffee55";
+    ctx.beginPath();
+    ctx.arc(650, 60, 35, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = "#ffff99";
+    ctx.beginPath();
+    ctx.arc(650, 60, 25, 0, Math.PI*2);
+    ctx.fill();
+
+    // Ocean band at horizon (slow parallax)
+    const oceanY = GROUND_Y - 60;
+    ctx.fillStyle = "#2288bb";
+    ctx.fillRect(0, oceanY, W, 40);
+    ctx.fillStyle = "#33aacc";
+    ctx.fillRect(0, oceanY + 10, W, 20);
+    // Animated wave crests
+    ctx.fillStyle = "#aaeeff";
+    for (let i = 0; i < 20; i++) {
+      const wx = ((i * 80 - cx * 0.15 + G.frameTime * 20) % (W + 100)) - 50;
+      ctx.fillRect(wx, oceanY + 8, 30, 3);
+      ctx.fillRect(wx + 15, oceanY + 22, 25, 3);
     }
 
-    // Mid buildings
-    ctx.fillStyle = "#223355";
-    for (let i = 0; i < 10; i++) {
-      const bx = ((i * 160 - cx * 0.3) % (W + 300)) - 150;
-      const bh = 100 + (i * 53 % 80);
-      ctx.fillRect(bx, GROUND_Y - bh, 80, bh);
+    // Wet sand strip
+    ctx.fillStyle = "#b89a5a";
+    ctx.fillRect(0, oceanY + 40, W, 20);
+
+    // Palm tree silhouettes (far parallax)
+    for (let i = 0; i < 4; i++) {
+      const px = ((i * 280 + 100 - cx * 0.08) % (W + 300)) - 100;
+      // Trunk
+      ctx.fillStyle = "#775533";
+      ctx.fillRect(px + 8, GROUND_Y - 100, 8, 100);
+      // Fronds
+      ctx.fillStyle = "#338844";
+      ctx.beginPath();
+      ctx.ellipse(px + 12, GROUND_Y - 100, 35, 14, -0.3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(px + 12, GROUND_Y - 105, 30, 12, 0.4, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // Shell silhouettes scattered in sand (slow parallax)
+    ctx.fillStyle = "rgba(160,130,80,0.4)";
+    for (let i = 0; i < 12; i++) {
+      const sx = ((i * 130 + 50 - cx * 0.05) % (W + 200)) - 50;
+      const sy = GROUND_Y - 5 + (i * 7 % 10);
+      ctx.beginPath();
+      ctx.arc(sx, sy, 4 + (i % 3), 0, Math.PI, true);
+      ctx.fill();
+      // Shell ridges
+      ctx.strokeStyle = "rgba(140,110,60,0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx - 2, sy - 3);
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + 2, sy - 3);
+      ctx.stroke();
     }
 
   } else if (bg === "construction") {
@@ -1550,18 +1594,25 @@ function drawHUD(ctx) {
   ctx.fillStyle = COLORS.uiBg;
   ctx.fillRect(0, 0, W, 30);
 
-  // Lives (spider icons)
+  // Lives (hero icons)
   for (let i = 0; i < G.lives; i++) {
-    // Mini spider
-    ctx.fillStyle = "#d22";
-    ctx.fillRect(10 + i * 22, 8, 10, 8);
-    ctx.fillStyle = "#911";
-    ctx.fillRect(8 + i * 22, 12, 3, 6);
-    ctx.fillRect(19 + i * 22, 12, 3, 6);
+    const lx = 10 + i * 22;
+    // Head (skin)
+    ctx.fillStyle = "#e8a878";
+    ctx.fillRect(lx + 2, 5, 8, 7);
+    // Mask/hair
+    ctx.fillStyle = "#111";
+    ctx.fillRect(lx + 2, 5, 8, 3);
     // Eyes
     ctx.fillStyle = "#fff";
-    ctx.fillRect(12 + i * 22, 9, 2, 2);
-    ctx.fillRect(16 + i * 22, 9, 2, 2);
+    ctx.fillRect(lx + 3, 7, 2, 2);
+    ctx.fillRect(lx + 7, 7, 2, 2);
+    // Body (red suit)
+    ctx.fillStyle = "#d22";
+    ctx.fillRect(lx + 1, 12, 10, 8);
+    // Belt
+    ctx.fillStyle = "#111";
+    ctx.fillRect(lx + 1, 17, 10, 2);
   }
 
   // Energy bar
@@ -1608,30 +1659,32 @@ function drawMenu(ctx) {
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,W,H);
 
-  // Animated web pattern
-  ctx.strokeStyle = "rgba(255,255,255,0.05)";
-  ctx.lineWidth = 1;
-  for (let i = 0; i < 10; i++) {
-    const angle = (t * 0.3 + i * 0.628);
-    const cx = W/2 + Math.cos(angle) * 150;
-    const cy = H/2 + Math.sin(angle) * 100;
+  // Animated starburst pattern
+  ctx.strokeStyle = "rgba(255,255,255,0.07)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 16; i++) {
+    const angle = (t * 0.2 + i * Math.PI / 8);
+    const len = 160 + Math.sin(t * 2 + i) * 30;
+    const bx = W/2 + Math.cos(angle) * len;
+    const by = H/2 + Math.sin(angle) * len * 0.7;
     ctx.beginPath();
     ctx.moveTo(W/2, H/2);
-    ctx.lineTo(cx, cy);
+    ctx.lineTo(bx, by);
     ctx.stroke();
   }
-  // Concentric web rings
-  for (let r = 30; r < 200; r += 30) {
+  // Pulsing glow rings
+  for (let r = 40; r < 200; r += 50) {
+    ctx.strokeStyle = `rgba(255,200,50,${0.03 + 0.02 * Math.sin(t * 2 + r * 0.1)})`;
     ctx.beginPath();
-    ctx.arc(W/2, H/2, r, 0, Math.PI*2);
+    ctx.arc(W/2, H/2, r + Math.sin(t + r) * 5, 0, Math.PI*2);
     ctx.stroke();
   }
 
   // Title
   drawTextCentered(ctx, "WEB RUNNER", 80, 6, "#dd2222");
-  drawTextCentered(ctx, "A SPIDER ADVENTURE", 140, 2, "#888");
+  drawTextCentered(ctx, "A SUPERHERO ADVENTURE", 140, 2, "#888");
 
-  // Spider mascot
+  // Hero mascot
   drawSprite(ctx, "spider_run1", W/2 - 16, 180);
 
   // Instructions
@@ -1666,7 +1719,7 @@ function drawLevelIntro(ctx) {
   } else if (G.level === 3) {
     drawTextCentered(ctx, "WARNING: DARK TUNNEL AHEAD!", 320, 2, "#c44");
   } else if (G.level === 4) {
-    drawTextCentered(ctx, "THE BOSS SPIDER AWAITS...", 320, 2, "#c4c");
+    drawTextCentered(ctx, "THE VILLAIN AWAITS...", 320, 2, "#c4c");
   }
 
   const remaining = Math.max(0, Math.ceil(G.introTimer));
@@ -1716,8 +1769,8 @@ function drawVictory(ctx) {
   }
 
   drawTextCentered(ctx, "VICTORY!", 80, 6, "#ffdd00");
-  drawTextCentered(ctx, "YOU DEFEATED THE BOSS SPIDER!", 160, 2, "#fff");
-  drawTextCentered(ctx, "WEB RUNNER SAVES THE DAY!", 190, 2, "#8f8");
+  drawTextCentered(ctx, "YOU DEFEATED THE VILLAIN!", 160, 2, "#fff");
+  drawTextCentered(ctx, "OUR HERO SAVES THE DAY!", 190, 2, "#8f8");
 
   drawTextCentered(ctx, "FINAL SCORE: " + G.score, 250, 3, COLORS.gold);
   drawTextCentered(ctx, "TOTAL BUGS: " + G.bugsCollected, 300, 2, "#fff");
